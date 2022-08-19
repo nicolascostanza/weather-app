@@ -1,38 +1,75 @@
 import { useState, useEffect } from "react";
-import "./App.css";
 import { API_KEY } from "./keys";
+import { motion } from "framer-motion";
+import "./App.css";
+import fondo from "./assets/fondo.jpg";
 
 function App() {
   const [data, setData] = useState();
-  console.log(data);
+  const [city, setCity] = useState("");
 
-  useEffect(() => {
+  const getData = (e) => {
+    e.preventDefault();
     fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=london&units=metric&appid=${API_KEY}`
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`
     )
       .then((response) => response.json())
       .then((response) => {
         setData(response);
       });
-  }, []);
+  };
+
   return (
-    <div className="App bg-secondary">
-      <div className="container">
-        <div className="row p-3">
-          <div className="col-6 mx-auto mt-5 prueba">
-            <form className="form-control d-flex flex-column">
-              <input className="m-3" type="text" placeholder="City" />
-              <input className="m-3" type="text" placeholder="Country" />
-              <button type="button" className="btn btn-primary m-3">
-                SEND
-              </button>
-            </form>
+    <div className="App">
+      <motion.h1
+        className="titulo"
+        initial={{ color: "#fff", scale: 0.5 }}
+        transition={{ duration: 1.3 }}
+        animate={{ y: 30, color: "#000", scale: 1 }}
+      >
+        Meteo Fusion
+      </motion.h1>
+      <div className="main">
+        <div className="lado-izquierdo">
+          <motion.h3
+            initial={{ color: "#fff", scale: 0.5 }}
+            transition={{ duration: 1.3 }}
+            animate={{ y: 30, color: "#000", scale: 1 }}
+          >
+            Weather Fusion is a free application with which you can get the
+            weather of any city in the world.
+          </motion.h3>
+          <div>
+            <div>
+              <form className="form-control d-flex flex-column">
+                <input
+                  onChange={(e) => setCity(e.target.value)}
+                  className="m-3"
+                  type="text"
+                  placeholder="City"
+                />
+                <button
+                  onClick={(e) => getData(e)}
+                  type="button"
+                  className="btn btn-primary m-3"
+                >
+                  SEND
+                </button>
+              </form>
+            </div>
           </div>
         </div>
-        <div className="row">
-          <div className="col-6 mx-auto d-flex flex-row">
+        <div className="lado-derecho">
+          <>
             {data === undefined ? null : (
-              <>
+              <div
+                className="flex-derecha"
+              >
+                <img
+                  className="imgClima"
+                  src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`}
+                  alt="clima"
+                />
                 <ul>
                   <li>City: {data.name}</li>
                   <li>Country: {data.sys?.country}</li>
@@ -45,14 +82,9 @@ function App() {
                   <li>visibility: {data.visibility}</li>
                   <li>Wind speed: {data.wind.speed}</li>
                 </ul>
-                <img
-                className="mx-auto"
-                  src={`http://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`}
-                  alt="clima"
-                />
-              </>
+              </div>
             )}
-          </div>
+          </>
         </div>
       </div>
     </div>
